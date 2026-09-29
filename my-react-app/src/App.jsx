@@ -1,122 +1,150 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import './App.css'
+import React, { useState, useRef } from 'react';
 
-function App() {
-  const [count, setCount] = useState(0)
+function useIncomeTracker() {
+  const [categories, setCategories] = useState([]);
+  const [catName, setCatName] = useState('');
+  const [catDesc, setCatDesc] = useState('');
+  const catNameRef = useRef(null);
+
+  const handleAddCategory = () => {
+    if (!catName.trim() || !catDesc.trim()) {
+      alert("Please complete both input fields.");
+      return;
+    }
+
+    setCategories(prev => [
+      ...prev, 
+      { name: catName.trim(), desc: catDesc.trim() }
+    ]);
+
+    setCatName('');
+    setCatDesc('');
+    
+    if (catNameRef.current) {
+      catNameRef.current.focus();
+    }
+  };
+
+  return {
+    categories,
+    catName,
+    setCatName,
+    catDesc,
+    setCatDesc,
+    catNameRef,
+    handleAddCategory
+  };
+}
+
+export default function App() {
+  const {
+    categories,
+    catName,
+    setCatName,
+    catDesc,
+    setCatDesc,
+    catNameRef,
+    handleAddCategory
+  } = useIncomeTracker();
 
   return (
     <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+      <link 
+        rel="stylesheet" 
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" 
+      />
+      <div className="bg-light py-5 min-vh-100">
+        <main className="container">
+          <div className="row justify-content-center">
+            <div className="col-lg-8">
+              
+              {/* Registration Card */}
+              <div className="card shadow-sm border-0 mb-4">
+                <div className="card-header bg-primary text-white py-3">
+                  <h1 className="h5 mb-0 fw-bold">Income Category Registration</h1>
+                </div>
+                <div className="card-body p-4">
+                  <form onSubmit={(e) => { e.preventDefault(); handleAddCategory(); }}>
+                    <div className="mb-3">
+                      <label htmlFor="txtCatName" className="form-label fw-semibold">
+                        Category Name
+                      </label>
+                      <input 
+                        type="text" 
+                        id="txtCatName" 
+                        className="form-control"
+                        placeholder="e.g., Consulting" 
+                        value={catName}
+                        onChange={(e) => setCatName(e.target.value)}
+                        ref={catNameRef}
+                        required 
+                      />
+                    </div>
+                    
+                    <div className="mb-3">
+                      <label htmlFor="txtCatDesc" className="form-label fw-semibold">
+                        Description
+                      </label>
+                      <input 
+                        type="text" 
+                        id="txtCatDesc" 
+                        className="form-control"
+                        placeholder="e.g., Enterprise technical support contract" 
+                        value={catDesc}
+                        onChange={(e) => setCatDesc(e.target.value)}
+                        required 
+                      />
+                    </div>
 
-      <div className="ticks"></div>
+                    <button 
+                      type="submit" 
+                      className="btn btn-primary px-4 fw-semibold"
+                    >
+                      Save Category
+                    </button>
+                  </form>
+                </div>
+              </div>
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+              {/* Ledger Table Card */}
+              <div className="card shadow-sm border-0">
+                <div className="card-header bg-white py-3">
+                  <h2 className="h6 mb-0 text-secondary fw-bold text-uppercase">
+                    Registered Categories
+                  </h2>
+                </div>
+                <div className="table-responsive">
+                  <table className="table table-hover align-middle mb-0">
+                    <thead className="table-light">
+                      <tr>
+                        <th scope="col" className="w-35">Category Name</th>
+                        <th scope="col">Description</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {categories.length === 0 ? (
+                        <tr>
+                          <td colSpan="2" className="text-center text-muted py-3">
+                            No categories added yet.
+                          </td>
+                        </tr>
+                      ) : (
+                        categories.map((category, index) => (
+                          <tr key={index}>
+                            <td className="fw-semibold text-dark">{category.name}</td>
+                            <td className="text-secondary">{category.desc}</td>
+                          </tr>
+                        ))
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
+            </div>
+          </div>
+        </main>
+      </div>
     </>
-  )
+  );
 }
-
-export default App
